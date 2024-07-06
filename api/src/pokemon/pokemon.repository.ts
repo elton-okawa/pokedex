@@ -1,5 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ListParams, PokemonEntity, PokemonList } from "./pokemon.model";
+import {
+  ListParams,
+  Pokemon,
+  PokemonEntity,
+  PokemonList,
+} from "./pokemon.model";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Repository } from "typeorm";
 import { PokemonApi } from "./pokemon.api";
@@ -28,6 +33,10 @@ export class PokemonRepository {
       count,
       results,
     };
+  }
+
+  async get(id: number): Promise<Pokemon | null> {
+    return this.api.getPokemon(id);
   }
 
   async sync() {

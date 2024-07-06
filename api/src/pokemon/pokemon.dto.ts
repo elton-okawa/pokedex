@@ -16,3 +16,8 @@ export class ListPokemonQuery {
   @IsOptional()
   name?: string;
 }
+
+export class GetPokemonParams {
+  @IsNumber()
+  id!: number;
+}

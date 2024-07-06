@@ -164,3 +164,50 @@ export function getPokemonApiResponse() {
     ],
   };
 }
+
+export function getExpectedPokemon() {
+  return {
+    height: 7,
+    id: 1,
+    name: "bulbasaur",
+    sprites: {
+      default: {
+        back: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png",
+        front:
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+      },
+    },
+    image: {
+      default:
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
+    },
+    stats: [
+      {
+        base: 45,
+        name: "hp",
+      },
+      {
+        base: 49,
+        name: "attack",
+      },
+      {
+        base: 49,
+        name: "defense",
+      },
+      {
+        base: 65,
+        name: "special-attack",
+      },
+      {
+        base: 65,
+        name: "special-defense",
+      },
+      {
+        base: 45,
+        name: "speed",
+      },
+    ],
+    types: ["grass", "poison"],
+    weight: 69,
+  };
+}

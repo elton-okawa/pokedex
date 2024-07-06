@@ -104,4 +104,27 @@ describe("Pokemon - e2e tests", () => {
         });
     });
   });
+
+  describe(`GET /api/pokemon/:id`, () => {
+    it("should return pokemon by id correctly", async () => {
+      nock(process.env.POKEMON_SERVICE_URL ?? "")
+        .get("/api/v2/pokemon/1")
+        .reply(200, fixtures.pokemon.getPokemonApiResponse());
+
+      await request(app.getHttpServer())
+        .get("/api/pokemon/1")
+        .expect(200)
+        .expect(fixtures.pokemon.getExpectedPokemon());
+      expect(nock.isDone()).toBe(true);
+    });
+
+    it("should return 404 when pokemon does not exist", async () => {
+      nock(process.env.POKEMON_SERVICE_URL ?? "")
+        .get("/api/v2/pokemon/1")
+        .reply(404);
+
+      await request(app.getHttpServer()).get("/api/pokemon/1").expect(404);
+      expect(nock.isDone()).toBe(true);
+    });
+  });
 });
