@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "API",
+      "path": "./api"
+    },
+    {
+      "name": "APP",
+      "path": "./app"
+    }
+  ],
+  "settings": {
+    "jest.disabledWorkspaceFolders": ["root", "APP"],
+    "cSpell.words": ["Pokedex"]
+  }
+}
