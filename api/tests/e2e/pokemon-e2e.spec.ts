@@ -46,6 +46,18 @@ describe("Pokemon - e2e tests", () => {
       expect(nock.isDone()).toBe(true);
     });
 
+    it("should accept limit and offset params", async () => {
+      nock(config.url)
+        .get("/api/v2/pokemon?limit=30&offset=10")
+        .reply(200, fixtures.pokemon.listApiResponse());
+
+      await request(app.getHttpServer())
+        .get("/api/pokemon?limit=30&offset=10")
+        .expect(200);
+
+      expect(nock.isDone()).toBe(true);
+    });
+
     it("should return error on invalid query", async () => {
       await request(app.getHttpServer())
         .get("/api/pokemon?limit=-1&offset=not")
@@ -60,8 +72,5 @@ describe("Pokemon - e2e tests", () => {
           statusCode: 400,
         });
     });
-
-    // invalid limit
-    // invalid offset
   });
 });
