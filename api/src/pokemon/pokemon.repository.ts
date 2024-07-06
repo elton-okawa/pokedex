@@ -30,16 +30,6 @@ export class PokemonRepository {
     };
   }
 
-  // async filter({ limit, name }: FilterParams): Promise<PokemonList> {
-  //   const [results, count] = await this.pokemon.findAndCount({
-  //     take: limit,
-  //     where: { name: Like(`${name}%`) }, // TODO check if it is sanitized
-  //     order: { id: "ASC" },
-  //   });
-
-  //   return { count, results };
-  // }
-
   async sync() {
     this.logger.debug("Syncing pokemon...");
     const pokemon = await this.api.listPokemon({
