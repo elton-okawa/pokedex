@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { PaginationParams, PokemonRepository } from "./pokemon.repository";
+import { PokemonRepository } from "./pokemon.repository";
+import { PaginationParams } from "./pokemon.model";
 
 @Injectable()
 export class PokemonService {
@@ -7,5 +8,9 @@ export class PokemonService {
 
   list(pagination: PaginationParams) {
     return this.repository.list(pagination);
+  }
+
+  sync() {
+    return this.repository.sync();
   }
 }

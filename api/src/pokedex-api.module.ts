@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
-import { PokemonModule } from "./pokemon";
+import { Pokemon, PokemonModule } from "./pokemon";
+import { GlobalTypeOrm } from "./global";
 
 @Module({
-  imports: [PokemonModule],
+  imports: [PokemonModule, GlobalTypeOrm],
 })
 export class PokedexApiModule {}

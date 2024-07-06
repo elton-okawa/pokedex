@@ -1,49 +1,54 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { HttpService } from "@nestjs/axios";
-import { PokemonConfig, PokemonConfigKey } from "./pokemon.config";
-import { lastValueFrom } from "rxjs";
-import { PokemonList } from "./pokemon.model";
+import { Inject, Injectable, Logger } from "@nestjs/common";
+import { PaginationParams, Pokemon, PokemonList } from "./pokemon.model";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { PokemonApi } from "./pokemon.api";
 
-export type PaginationParams = {
-  limit: number;
-  offset: number;
-};
-
-type PokemonListApiResponse = {
-  count: number;
-  results: { name: string; url: string }[];
-};
+const ALL_POKEMON_COUNT = 10000;
 
 @Injectable()
 export class PokemonRepository {
+  private readonly logger = new Logger(PokemonRepository.name);
+
   constructor(
-    @Inject(PokemonConfigKey) private readonly config: PokemonConfig,
-    private readonly http: HttpService
+    @InjectRepository(Pokemon) private readonly pokemon: Repository<Pokemon>,
+    private readonly api: PokemonApi
   ) {}
 
   async list(pagination: PaginationParams): Promise<PokemonList> {
-    return this.fetch(pagination);
-  }
-
-  private async fetch({
-    limit,
-    offset,
-  }: PaginationParams): Promise<PokemonList> {
-    const { data } = await lastValueFrom(
-      this.http.get<PokemonListApiResponse>(
-        `/api/v2/pokemon?limit=${limit}&offset=${offset}`,
-        {
-          baseURL: this.config.url,
-        }
-      )
-    );
+    const [results, count] = await this.pokemon.findAndCount({
+      take: pagination.limit,
+      skip: pagination.offset,
+      order: { id: "ASC" },
+    });
 
     return {
-      count: data.count,
-      results: data.results.map((item) => ({
-        id: item.url.split("/")[6],
-        name: item.name,
-      })),
+      count,
+      results,
     };
+  }
+
+  async filter({
+    limit,
+    name,
+  }: {
+    limit: number;
+    name: string;
+  }): Promise<PokemonList> {
+    return { count: 0, results: [] };
+  }
+
+  async sync() {
+    this.logger.debug("Syncing pokemon...");
+    const pokemon = await this.api.listPokemon({
+      limit: ALL_POKEMON_COUNT,
+      offset: 0,
+    });
+
+    await this.pokemon.manager.transaction(async (manager) => {
+      await manager.clear(Pokemon);
+      await manager.save(Pokemon, pokemon.results);
+    });
+    this.logger.debug(`Synched '${pokemon.count}' pokemon successfully!`);
   }
 }
