@@ -1,7 +1,7 @@
 import { Test } from "@nestjs/testing";
 import { createMock, DeepMocked } from "@golevelup/ts-jest";
 import {
-  Pokemon,
+  PokemonEntity,
   PokemonApi,
   PokemonModule,
   PokemonRepository,
@@ -13,7 +13,7 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 
 describe("PokemonRepository - integration tests", () => {
   let apiMock: DeepMocked<PokemonApi>;
-  let pokemon: Repository<Pokemon>;
+  let pokemon: Repository<PokemonEntity>;
   let repository: PokemonRepository;
 
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe("PokemonRepository - integration tests", () => {
       .useValue(apiMock)
       .compile();
 
-    pokemon = module.get(getRepositoryToken(Pokemon));
+    pokemon = module.get(getRepositoryToken(PokemonEntity));
     repository = module.get(PokemonRepository);
   });
 
