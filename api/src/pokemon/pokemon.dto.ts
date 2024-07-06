@@ -1,0 +1,14 @@
+import { IsNumber, IsOptional, Max, Min } from "class-validator";
+
+export class ListPokemonQuery {
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  @IsOptional()
+  limit?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  offset?: number;
+}

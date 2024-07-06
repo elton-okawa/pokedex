@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "module": "CommonJS",
+    "esModuleInterop": true,
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
