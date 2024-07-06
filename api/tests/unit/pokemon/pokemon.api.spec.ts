@@ -20,7 +20,7 @@ describe("PokemonApi - unit tests", () => {
     httpMock = unitRef.get(HttpService);
   });
 
-  describe("list", () => {
+  describe("listPokemon", () => {
     it("should list pokemon correctly", async () => {
       httpMock.get.mockImplementationOnce(() =>
         of({ data: fixtures.pokemon.listApiResponse() } as AxiosResponse)
@@ -40,6 +40,22 @@ describe("PokemonApi - unit tests", () => {
         "/api/v2/pokemon?limit=10&offset=5",
         { baseURL: config.url }
       );
+    });
+  });
+
+  describe("getPokemon", () => {
+    it("should get pokemon correctly", async () => {
+      httpMock.get.mockImplementationOnce(() =>
+        of({ data: fixtures.pokemon.getPokemonApiResponse() } as AxiosResponse)
+      );
+
+      const pokemon = await api.getPokemon(1);
+
+      expect(pokemon).toStrictEqual(fixtures.pokemon.getExpectedPokemon());
+      expect(httpMock.get).toHaveBeenCalledTimes(1);
+      expect(httpMock.get).toHaveBeenCalledWith("/api/v2/pokemon/1", {
+        baseURL: config.url,
+      });
     });
   });
 });

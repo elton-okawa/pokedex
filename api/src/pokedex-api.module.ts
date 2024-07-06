@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { Pokemon, PokemonModule } from "./pokemon";
+import { PokemonEntity, PokemonModule } from "./pokemon";
 import { GlobalTypeOrm } from "./global";
 
 @Module({

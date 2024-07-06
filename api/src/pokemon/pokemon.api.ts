@@ -2,7 +2,8 @@ import { Inject, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { PokemonConfig, PokemonConfigKey } from "./pokemon.config";
 import { lastValueFrom } from "rxjs";
-import { PokemonList } from "./pokemon.model";
+import { Pokemon, PokemonList } from "./pokemon.model";
+import { AxiosError } from "axios";
 
 type PokemonListApiResponse = {
   count: number;
@@ -12,6 +13,33 @@ type PokemonListApiResponse = {
 type PokemonListParams = {
   limit: number;
   offset: number;
+};
+
+type PokemonResponse = {
+  id: number;
+  name: string;
+  height: number;
+  weight: number;
+  stats: {
+    base_stat: number;
+    stat: {
+      name: string;
+    };
+  }[];
+  types: {
+    type: {
+      name: string;
+    };
+  }[];
+  sprites: {
+    front_default: string;
+    back_default: string;
+    other: {
+      "official-artwork": {
+        front_default: string;
+      };
+    };
+  };
 };
 
 @Injectable()
@@ -41,5 +69,41 @@ export class PokemonApi {
         name: item.name,
       })),
     };
+  }
+
+  async getPokemon(id: number): Promise<Pokemon | null> {
+    try {
+      const { data } = await lastValueFrom(
+        this.http.get<PokemonResponse>(`/api/v2/pokemon/${id}`, {
+          baseURL: this.config.url,
+        })
+      );
+
+      return {
+        id: data.id,
+        name: data.name,
+        height: data.height,
+        weight: data.weight,
+        stats: data.stats.map((stat) => ({
+          base: stat.base_stat,
+          name: stat.stat.name,
+        })),
+        types: data.types.map((type) => type.type.name),
+        sprites: {
+          default: {
+            front: data.sprites.front_default,
+            back: data.sprites.back_default,
+          },
+        },
+        image: {
+          default: data.sprites.other["official-artwork"].front_default,
+        },
+      };
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 404)
+        return null;
+
+      throw error;
+    }
   }
 }

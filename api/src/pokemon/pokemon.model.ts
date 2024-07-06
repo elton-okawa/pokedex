@@ -15,10 +15,31 @@ export class PokemonList {
 }
 
 @Entity()
-export class Pokemon {
+export class PokemonEntity {
   @PrimaryColumn()
   id!: number;
 
   @Column()
   name!: string;
+}
+
+export class Pokemon {
+  id!: number;
+  name!: string;
+  height!: number;
+  weight!: number;
+  stats!: {
+    base: number;
+    name: string;
+  }[];
+  types!: string[];
+  sprites!: {
+    default: {
+      front: string;
+      back: string;
+    };
+  };
+  image!: {
+    default: string;
+  };
 }

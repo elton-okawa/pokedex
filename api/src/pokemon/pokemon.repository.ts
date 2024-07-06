@@ -1,5 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ListParams, Pokemon, PokemonList } from "./pokemon.model";
+import {
+  ListParams,
+  Pokemon,
+  PokemonEntity,
+  PokemonList,
+} from "./pokemon.model";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Like, Repository } from "typeorm";
 import { PokemonApi } from "./pokemon.api";
@@ -11,7 +16,8 @@ export class PokemonRepository {
   private readonly logger = new Logger(PokemonRepository.name);
 
   constructor(
-    @InjectRepository(Pokemon) private readonly pokemon: Repository<Pokemon>,
+    @InjectRepository(PokemonEntity)
+    private readonly pokemon: Repository<PokemonEntity>,
     private readonly api: PokemonApi
   ) {}
 
@@ -29,15 +35,9 @@ export class PokemonRepository {
     };
   }
 
-  // async filter({ limit, name }: FilterParams): Promise<PokemonList> {
-  //   const [results, count] = await this.pokemon.findAndCount({
-  //     take: limit,
-  //     where: { name: Like(`${name}%`) }, // TODO check if it is sanitized
-  //     order: { id: "ASC" },
-  //   });
-
-  //   return { count, results };
-  // }
+  async get(id: number): Promise<Pokemon | null> {
+    return this.api.getPokemon(id);
+  }
 
   async sync() {
     this.logger.debug("Syncing pokemon...");
@@ -47,8 +47,8 @@ export class PokemonRepository {
     });
 
     await this.pokemon.manager.transaction(async (manager) => {
-      await manager.clear(Pokemon);
-      await manager.save(Pokemon, pokemon.results);
+      await manager.clear(PokemonEntity);
+      await manager.save(PokemonEntity, pokemon.results);
     });
     this.logger.debug(`Synched '${pokemon.count}' pokemon successfully!`);
   }

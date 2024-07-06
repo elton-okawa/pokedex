@@ -6,14 +6,14 @@ import { ConfigModule } from "@nestjs/config";
 import { pokemonConfig } from "./pokemon.config";
 import { PokemonRepository } from "./pokemon.repository";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Pokemon } from "./pokemon.model";
+import { PokemonEntity } from "./pokemon.model";
 import { PokemonApi } from "./pokemon.api";
 
 @Module({
   imports: [
     HttpModule,
     ConfigModule.forFeature(pokemonConfig),
-    TypeOrmModule.forFeature([Pokemon]),
+    TypeOrmModule.forFeature([PokemonEntity]),
   ],
   controllers: [PokemonController],
   providers: [PokemonService, PokemonRepository, PokemonApi],

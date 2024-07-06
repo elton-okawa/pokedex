@@ -13,4 +13,8 @@ export class PokemonService {
   sync() {
     return this.repository.sync();
   }
+
+  async get(id: number) {
+    return this.repository.get(id);
+  }
 }
