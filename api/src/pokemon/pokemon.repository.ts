@@ -1,7 +1,7 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
-import { PaginationParams, Pokemon, PokemonList } from "./pokemon.model";
+import { Injectable, Logger } from "@nestjs/common";
+import { ListParams, Pokemon, PokemonList } from "./pokemon.model";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { PokemonApi } from "./pokemon.api";
 
 const ALL_POKEMON_COUNT = 10000;
@@ -15,10 +15,11 @@ export class PokemonRepository {
     private readonly api: PokemonApi
   ) {}
 
-  async list(pagination: PaginationParams): Promise<PokemonList> {
+  async list({ limit, offset, name }: ListParams): Promise<PokemonList> {
     const [results, count] = await this.pokemon.findAndCount({
-      take: pagination.limit,
-      skip: pagination.offset,
+      take: limit,
+      skip: offset,
+      where: { name: name ? Like(`${name}%`) : undefined },
       order: { id: "ASC" },
     });
 
@@ -28,15 +29,15 @@ export class PokemonRepository {
     };
   }
 
-  async filter({
-    limit,
-    name,
-  }: {
-    limit: number;
-    name: string;
-  }): Promise<PokemonList> {
-    return { count: 0, results: [] };
-  }
+  // async filter({ limit, name }: FilterParams): Promise<PokemonList> {
+  //   const [results, count] = await this.pokemon.findAndCount({
+  //     take: limit,
+  //     where: { name: Like(`${name}%`) }, // TODO check if it is sanitized
+  //     order: { id: "ASC" },
+  //   });
+
+  //   return { count, results };
+  // }
 
   async sync() {
     this.logger.debug("Syncing pokemon...");

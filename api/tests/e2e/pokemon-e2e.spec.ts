@@ -9,7 +9,6 @@ import { setupApp } from "src/server";
 
 describe("Pokemon - e2e tests", () => {
   let app: INestApplication;
-  let config: PokemonConfig;
 
   beforeAll(async () => {
     nock(process.env.POKEMON_SERVICE_URL ?? "")
@@ -23,7 +22,6 @@ describe("Pokemon - e2e tests", () => {
     app = moduleRef.createNestApplication();
     setupApp(app);
 
-    config = moduleRef.get(PokemonConfigKey);
     await app.init();
   });
 
@@ -60,6 +58,31 @@ describe("Pokemon - e2e tests", () => {
             { id: 3, name: "venusaur" },
             { id: 4, name: "charmander" },
             { id: 5, name: "charmeleon" },
+          ],
+        });
+
+      expect(nock.isDone()).toBe(true);
+    });
+
+    it("should filter by name", async () => {
+      await request(app.getHttpServer())
+        .get("/api/pokemon?name=Char")
+        .expect(200)
+        .expect({
+          count: 3,
+          results: [
+            {
+              id: 4,
+              name: "charmander",
+            },
+            {
+              id: 5,
+              name: "charmeleon",
+            },
+            {
+              id: 6,
+              name: "charizard",
+            },
           ],
         });
 

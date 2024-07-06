@@ -9,7 +9,7 @@ export class PokemonController {
   constructor(private readonly service: PokemonService) {}
 
   @Get()
-  list(@Query() { offset = 0, limit = DEFAULT_LIMIT }: ListPokemonQuery) {
-    return this.service.list({ offset, limit });
+  list(@Query() { offset = 0, limit = DEFAULT_LIMIT, name }: ListPokemonQuery) {
+    return this.service.list({ offset, limit, name });
   }
 }

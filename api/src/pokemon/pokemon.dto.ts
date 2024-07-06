@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, Max, Min } from "class-validator";
+import { IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
 
 export class ListPokemonQuery {
   @IsNumber()
@@ -11,4 +11,8 @@ export class ListPokemonQuery {
   @Min(0)
   @IsOptional()
   offset?: number;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
 }

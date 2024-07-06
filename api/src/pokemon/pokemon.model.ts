@@ -1,8 +1,9 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
-export type PaginationParams = {
+export type ListParams = {
   limit: number;
   offset: number;
+  name?: string;
 };
 
 export class PokemonList {
