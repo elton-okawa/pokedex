@@ -2,25 +2,21 @@ import { TestBed } from "@automock/jest";
 import { HttpService } from "@nestjs/axios";
 import { AxiosResponse } from "axios";
 import { of } from "rxjs";
-import {
-  pokemonConfig,
-  PokemonConfigKey,
-  PokemonRepository,
-} from "src/pokemon";
+import { pokemonConfig, PokemonConfigKey, PokemonApi } from "src/pokemon";
 import { fixtures } from "tests/fixtures";
 
-describe("PokemonRepository - unit tests", () => {
-  let repository: PokemonRepository;
+describe("PokemonApi - unit tests", () => {
+  let api: PokemonApi;
   let httpMock: jest.Mocked<HttpService>;
   const config = pokemonConfig();
 
   beforeEach(() => {
-    const { unit, unitRef } = TestBed.create(PokemonRepository)
+    const { unit, unitRef } = TestBed.create(PokemonApi)
       .mock(PokemonConfigKey)
       .using(config)
       .compile();
 
-    repository = unit;
+    api = unit;
     httpMock = unitRef.get(HttpService);
   });
 
@@ -30,13 +26,13 @@ describe("PokemonRepository - unit tests", () => {
         of({ data: fixtures.pokemon.listApiResponse() } as AxiosResponse)
       );
 
-      const list = await repository.list({ limit: 10, offset: 5 });
+      const list = await api.listPokemon({ limit: 10, offset: 5 });
 
       expect(list).toStrictEqual({
         count: 1302,
         results: [
-          { id: "1", name: "bulbasaur" },
-          { id: "2", name: "ivysaur" },
+          { id: 1, name: "bulbasaur" },
+          { id: 2, name: "ivysaur" },
         ],
       });
       expect(httpMock.get).toHaveBeenCalledTimes(1);

@@ -1,11 +1,16 @@
 import { Injectable } from "@nestjs/common";
-import { PaginationParams, PokemonRepository } from "./pokemon.repository";
+import { PokemonRepository } from "./pokemon.repository";
+import { ListParams } from "./pokemon.model";
 
 @Injectable()
 export class PokemonService {
   constructor(private readonly repository: PokemonRepository) {}
 
-  list(pagination: PaginationParams) {
-    return this.repository.list(pagination);
+  list(params: ListParams) {
+    return this.repository.list(params);
+  }
+
+  sync() {
+    return this.repository.sync();
   }
 }
