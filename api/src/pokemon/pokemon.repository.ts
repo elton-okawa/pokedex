@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { HttpService } from "@nestjs/axios";
 import { PokemonConfig, PokemonConfigKey } from "./pokemon.config";
 import { lastValueFrom } from "rxjs";
+import { PokemonList } from "./pokemon.model";
 
 export type PaginationParams = {
   limit: number;
@@ -20,7 +21,14 @@ export class PokemonRepository {
     private readonly http: HttpService
   ) {}
 
-  async list({ limit, offset }: PaginationParams) {
+  async list(pagination: PaginationParams): Promise<PokemonList> {
+    return this.fetch(pagination);
+  }
+
+  private async fetch({
+    limit,
+    offset,
+  }: PaginationParams): Promise<PokemonList> {
     const { data } = await lastValueFrom(
       this.http.get<PokemonListApiResponse>(
         `/api/v2/pokemon?limit=${limit}&offset=${offset}`,
