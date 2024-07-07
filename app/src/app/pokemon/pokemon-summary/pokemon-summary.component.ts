@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PokemonSummary } from '../pokemon-summary';
+import { PokemonSummary } from '../pokemon';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 

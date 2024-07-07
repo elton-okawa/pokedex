@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { PokemonSummary } from './pokemon-summary';
+import { PokemonSummary } from './pokemon';
 import { SearchComponent } from '../search/search.component';
 import { PokemonService } from './pokemon.service';
 import { PokemonSummaryComponent } from './pokemon-summary/pokemon-summary.component';

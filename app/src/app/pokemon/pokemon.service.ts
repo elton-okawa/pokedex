@@ -1,14 +1,19 @@
 import { Injectable, OnDestroy, OnInit } from '@angular/core';
-import { PokemonQuery, PokemonSummary } from './pokemon-summary';
+import { PokemonDetails, PokemonQuery, PokemonSummary } from './pokemon';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   BehaviorSubject,
+  catchError,
   debounceTime,
   distinctUntilChanged,
+  map,
   Observable,
+  of,
+  startWith,
   Subject,
   switchMap,
 } from 'rxjs';
+import { HttpResponse } from '../http-response';
 
 type RequestState = 'idle' | 'loading' | 'error';
 type SearchParams = {
@@ -101,22 +106,20 @@ export class PokemonService implements OnDestroy {
     );
   }
 
-  protected pokemonList: PokemonSummary[] = [
-    { id: 1, name: 'bulbasaur' },
-    { id: 2, name: 'ivysaur' },
-    { id: 3, name: 'venosaur' },
-  ];
-
   getAllPokemon(): Observable<PokemonQuery> {
     return this.http.get<PokemonQuery>('/api/pokemon');
   }
 
-  ngOnDestroy(): void {
-    this.searchParamsSource.complete();
+  getPokemonById(id: number): Observable<HttpResponse<PokemonDetails>> {
+    return this.http.get<PokemonDetails>(`/api/pokemon/${id}`).pipe(
+      map((data) => ({ loading: false, data, error: null })),
+      catchError((error: Error) => of({ loading: false, error, data: null })),
+      startWith({ loading: true, error: null, data: null })
+    );
   }
 
-  getPokemonById(id: number) {
-    return this.pokemonList.find((pokemon) => pokemon.id === id);
+  ngOnDestroy(): void {
+    this.searchParamsSource.complete();
   }
 
   search(params: SearchParams) {

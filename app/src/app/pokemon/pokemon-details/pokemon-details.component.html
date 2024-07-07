@@ -1,0 +1,7 @@
+<section name="pokemon" *ngIf="pokemon$ | async as pokemon">
+  <div *ngIf="pokemon.loading">Loading...</div>
+  <div *ngIf="pokemon.error">{{ pokemon.error.message }}</div>
+  <div *ngIf="pokemon.data">
+    <h3>{{ pokemon.data.name }}</h3>
+  </div>
+</section>
