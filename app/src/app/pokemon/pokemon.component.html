@@ -1,1 +1,13 @@
-<p>pokemon works!</p>
+<section class="pokemon-list">
+  <app-search (valueChanged)="onSearch($event)" />
+  @if (isLoading) {
+  <p>Loading</p>
+  } @if (isError) {
+  <p>Error</p>
+  }
+  <app-pokemon-summary
+    *ngFor="let summary of pokemonQuery.results"
+    [pokemon]="summary"
+  />
+  <button (click)="onLoadMore()" [disabled]="!hasMore">Load more</button>
+</section>

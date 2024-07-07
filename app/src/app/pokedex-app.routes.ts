@@ -1,3 +1,17 @@
 import { Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { PokemonDetailsComponent } from './pokemon-details/pokemon-details.component';
+import { PokemonComponent } from './pokemon/pokemon.component';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: '',
+    component: PokemonComponent,
+    title: 'Pokedex',
+  },
+  {
+    path: 'pokemon/:id',
+    component: PokemonDetailsComponent,
+    title: 'Pokemon',
+  },
+];
