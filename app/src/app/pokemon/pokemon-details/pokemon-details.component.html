@@ -1,6 +1,6 @@
 <section class="pokemon-container">
   <div *ngIf="result.loading">Loading...</div>
-  <div *ngIf="result.error">{{ result.error.message }}</div>
+  <div *ngIf="result.error">Pokemon não encontrado</div>
   <div *ngIf="result.data" class="pokemon-data column">
     <h2 class="pokemon-name">{{ capitalizedName }} Nº{{ paddedNumber }}</h2>
     <div class="row">
