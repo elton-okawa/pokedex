@@ -13,6 +13,7 @@
 
 .pokemon-grid {
   display: grid;
+  padding: 8px;
   gap: 16px;
   grid-template-columns: 1fr 1fr 1fr;
   width: 100%;

@@ -12,4 +12,19 @@ import { CommonModule } from '@angular/common';
 })
 export class PokemonSummaryComponent {
   @Input() pokemon!: PokemonSummary;
+
+  get paddedNumber() {
+    return this.pokemon.id.toString().padStart(4, '0');
+  }
+
+  get capitalizedName() {
+    return (
+      this.pokemon.name.slice(0, 1).toUpperCase() + this.pokemon.name.slice(1)
+    );
+  }
+
+  // TODO this value should come from backend
+  get imageUrl() {
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${this.pokemon.id}.png`;
+  }
 }

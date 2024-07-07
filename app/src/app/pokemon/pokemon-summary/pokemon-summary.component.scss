@@ -1,0 +1,29 @@
+.pokemon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 4px;
+  padding: 8px;
+
+  transition: transform 0.2s;
+}
+
+.pokemon-container:hover {
+  border: 1px solid;
+  transform: scale(1.05);
+}
+
+.pokemon-name {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.pokemon-image {
+  width: 100%;
+  background-color: #f3f4f6;
+}
+
+.pokemon-number {
+  color: #9ca3af;
+  align-self: flex-start;
+}
