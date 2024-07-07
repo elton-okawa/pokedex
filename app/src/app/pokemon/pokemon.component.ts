@@ -1,12 +1,11 @@
 import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { PokemonSummary } from './pokemon';
+import { PokemonQuery } from './pokemon';
 import { SearchComponent } from '../search/search.component';
-import { PokemonService } from './pokemon.service';
+import { PokemonService, SearchParams } from './pokemon.service';
 import { PokemonSummaryComponent } from './pokemon-summary/pokemon-summary.component';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
-
-type RequestState = 'idle' | 'loading' | 'error';
+import { HttpResponse } from '../http-response';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-pokemon',
@@ -18,62 +17,60 @@ type RequestState = 'idle' | 'loading' | 'error';
 export class PokemonComponent implements OnInit, OnDestroy {
   @Input() limit = 6;
 
-  pokemonQuery: { count: number; results: PokemonSummary[] } = {
-    count: 0,
-    results: [],
-  };
   private pokemonService = inject(PokemonService);
-  private requestState: RequestState = 'idle';
-  private requestStateSubscription: Subscription | null = null;
-  private pokemonQuerySubscription: Subscription | null = null;
   private offset = 0;
   private searchName = '';
 
-  get isLoading() {
-    return this.requestState === 'loading';
-  }
+  private searchParamsSource = new Subject<SearchParams>();
+  private searchParamsRef: Subscription | null = null;
 
-  get isError() {
-    return this.requestState === 'error';
-  }
+  private pokemonQuerySource = new BehaviorSubject<HttpResponse<PokemonQuery>>({
+    loading: false,
+    data: null,
+    error: null,
+  });
+  pokemonQuery$ = this.pokemonQuerySource.asObservable();
 
   get hasMore() {
-    return this.pokemonQuery.count > this.pokemonQuery.results.length;
+    return (
+      !!this.pokemonQuerySource.value.data &&
+      this.pokemonQuerySource.value.data.count >
+        this.pokemonQuerySource.value.data.results.length
+    );
   }
 
   ngOnInit(): void {
-    this.requestStateSubscription = this.pokemonService.requestState$.subscribe(
-      (state) => (this.requestState = state)
-    );
+    this.searchParamsRef = this.pokemonService
+      .searchPokemon(this.searchParamsSource)
+      .subscribe((result) => this.pokemonQuerySource.next(result));
 
-    this.pokemonQuerySubscription = this.pokemonService.pokemonQuery$.subscribe(
-      (query) => (this.pokemonQuery = query)
-    );
-
-    this.onSearch('');
+    this.search({ append: false });
   }
 
   ngOnDestroy(): void {
-    this.requestStateSubscription?.unsubscribe();
-    this.pokemonQuerySubscription?.unsubscribe();
+    this.searchParamsRef?.unsubscribe();
   }
 
   onSearch(value: string) {
     this.searchName = value;
     this.offset = 0;
-    this.pokemonService.search({
-      name: this.searchName,
-      offset: this.offset,
-      limit: this.limit,
-    });
+    this.search({ append: false });
   }
 
   onLoadMore() {
     this.offset += this.limit;
-    this.pokemonService.loadMore({
-      name: this.searchName,
-      offset: this.offset,
-      limit: this.limit,
+    this.search({ append: true });
+  }
+
+  private search({ append }: { append: boolean }) {
+    this.searchParamsSource.next({
+      search: {
+        name: this.searchName,
+        offset: this.offset,
+        limit: this.limit,
+      },
+      append,
+      prev: this.pokemonQuerySource.value,
     });
   }
 }

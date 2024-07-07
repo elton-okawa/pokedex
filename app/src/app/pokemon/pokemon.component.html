@@ -4,18 +4,24 @@
     placeholder="Filter pokemon"
     (valueChanged)="onSearch($event)"
   />
-  @if (isLoading) {
-  <p>Loading</p>
-  } @if (isError) {
-  <p>Error</p>
-  }
-  <div class="pokemon-grid">
-    <app-pokemon-summary
-      *ngFor="let summary of pokemonQuery.results"
-      [pokemon]="summary"
-    />
+  <div *ngIf="pokemonQuery$ | async; let pokemonQuery">
+    @if (pokemonQuery.loading) {
+    <p>Loading</p>
+    } @if (pokemonQuery.error) {
+    <p>Error</p>
+    }
+    <div class="pokemon-grid">
+      <app-pokemon-summary
+        *ngFor="let summary of pokemonQuery.data?.results"
+        [pokemon]="summary"
+      />
+    </div>
+    <button
+      class="load-more-button"
+      (click)="onLoadMore()"
+      [disabled]="!hasMore"
+    >
+      Load more pokemon
+    </button>
   </div>
-  <button class="load-more-button" (click)="onLoadMore()" [disabled]="!hasMore">
-    Load more pokemon
-  </button>
 </section>

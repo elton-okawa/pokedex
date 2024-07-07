@@ -1,8 +1,7 @@
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
-import { PokemonDetails, PokemonQuery, PokemonSummary } from './pokemon';
+import { Injectable } from '@angular/core';
+import { PokemonDetails, PokemonQuery } from './pokemon';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {
-  BehaviorSubject,
   catchError,
   debounceTime,
   distinctUntilChanged,
@@ -14,100 +13,65 @@ import {
   switchMap,
 } from 'rxjs';
 import { HttpResponse } from '../http-response';
+import { withHttpResponse } from '../observable.helper';
 
-type RequestState = 'idle' | 'loading' | 'error';
-type SearchParams = {
-  name: string;
-  offset?: number;
-  limit?: number;
+export type SearchParams = {
+  search: {
+    name: string;
+    offset?: number;
+    limit?: number;
+  };
+  append?: boolean;
+  prev: HttpResponse<PokemonQuery>;
 };
 
 @Injectable({
   providedIn: 'root',
 })
-export class PokemonService implements OnDestroy {
-  private pokemonQuerySource = new BehaviorSubject<PokemonQuery>({
-    count: 0,
-    results: [],
-  });
-  pokemonQuery$ = this.pokemonQuerySource.asObservable();
-
-  private requestStateSource = new BehaviorSubject<RequestState>('idle');
-  requestState$ = this.requestStateSource.asObservable();
-
-  private searchParamsSource = new Subject<SearchParams>();
-  private loadMoreParamsSource = new Subject<SearchParams>();
-
-  constructor(private readonly http: HttpClient) {
-    this.observeSearch();
-    this.observeLoadMore();
-  }
-
-  private observeSearch() {
-    this.searchParamsSource
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(this.compareSearchParams),
-        switchMap((params) => {
-          this.requestStateSource.next('loading');
-          return this.http.get<PokemonQuery>('/api/pokemon', {
-            params: new HttpParams({ fromObject: params }),
-          });
-        })
-      )
-      .subscribe({
-        next: (query) => {
-          this.requestStateSource.next('idle');
-          this.pokemonQuerySource.next(query);
-        },
-        error: (error) => {
-          this.requestStateSource.next('error');
-          console.error('Something went wrong: ', error.message);
-        },
-      });
-  }
-
-  private observeLoadMore() {
-    this.loadMoreParamsSource
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(this.compareSearchParams),
-        switchMap((params) => {
-          this.requestStateSource.next('loading');
-          return this.http.get<PokemonQuery>('/api/pokemon', {
-            params: new HttpParams({ fromObject: params }),
-          });
-        })
-      )
-      .subscribe({
-        next: (query) => {
-          this.requestStateSource.next('idle');
-
-          this.pokemonQuerySource.next({
-            count: query.count,
-            results: [
-              ...this.pokemonQuerySource.value.results,
-              ...query.results,
-            ],
-          });
-        },
-        error: (error) => {
-          this.requestStateSource.next('error');
-          console.error('Something went wrong: ', error.message);
-        },
-      });
-  }
+export class PokemonService {
+  constructor(private readonly http: HttpClient) {}
 
   private compareSearchParams(first: SearchParams, second: SearchParams) {
     return (
-      first.name === second.name &&
-      first.limit === second.limit &&
-      first.offset === second.offset
+      first.search.name === second.search.name &&
+      first.search.limit === second.search.limit &&
+      first.search.offset === second.search.offset
     );
   }
 
   getAllPokemon(): Observable<PokemonQuery> {
     return this.http.get<PokemonQuery>('/api/pokemon');
+  }
+
+  searchPokemon(subject: Subject<SearchParams>) {
+    return subject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(this.compareSearchParams),
+      switchMap((params) => {
+        return this.http
+          .get<PokemonQuery>('/api/pokemon', {
+            params: new HttpParams({
+              fromObject: params.search,
+            }),
+          })
+          .pipe(
+            map((query) => {
+              if (params.append) {
+                return {
+                  count: query.count,
+                  results: [
+                    ...(params.prev.data?.results ?? []),
+                    ...query.results,
+                  ],
+                };
+              }
+
+              return query;
+            })
+          );
+      }),
+      withHttpResponse<PokemonQuery>()
+    );
   }
 
   getPokemonById(id: number): Observable<HttpResponse<PokemonDetails>> {
@@ -116,17 +80,5 @@ export class PokemonService implements OnDestroy {
       catchError((error: Error) => of({ loading: false, error, data: null })),
       startWith({ loading: true, error: null, data: null })
     );
-  }
-
-  ngOnDestroy(): void {
-    this.searchParamsSource.complete();
-  }
-
-  search(params: SearchParams) {
-    this.searchParamsSource.next(params);
-  }
-
-  loadMore(params: SearchParams) {
-    this.loadMoreParamsSource.next(params);
   }
 }
