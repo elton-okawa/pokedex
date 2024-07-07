@@ -5,23 +5,25 @@
     (valueChanged)="onSearch($event)"
   />
   <div *ngIf="pokemonQuery$ | async; let pokemonQuery">
-    @if (pokemonQuery.loading) {
-    <p>Loading</p>
-    } @if (pokemonQuery.error) {
-    <p>Error</p>
-    }
+    <div
+      *ngIf="pokemonQuery.loading || pokemonQuery.error"
+      class="loading-indicator"
+    >
+      <p *ngIf="pokemonQuery.loading">Loading...</p>
+      <p *ngIf="pokemonQuery.error">Error</p>
+    </div>
     <div class="pokemon-grid">
       <app-pokemon-summary
         *ngFor="let summary of pokemonQuery.data?.results"
         [pokemon]="summary"
       />
     </div>
-    <button
-      class="load-more-button"
-      (click)="onLoadMore()"
-      [disabled]="!hasMore"
-    >
-      Load more pokemon
-    </button>
   </div>
+  <button
+    class="load-more-button"
+    (click)="onLoadMore()"
+    [disabled]="disableLoadMore"
+  >
+    Load more pokemon
+  </button>
 </section>

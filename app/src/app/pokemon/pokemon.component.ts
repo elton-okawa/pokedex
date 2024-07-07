@@ -31,11 +31,16 @@ export class PokemonComponent implements OnInit, OnDestroy {
   });
   pokemonQuery$ = this.pokemonQuerySource.asObservable();
 
-  get hasMore() {
-    return (
+  get disableLoadMore() {
+    const hasMore =
       !!this.pokemonQuerySource.value.data &&
       this.pokemonQuerySource.value.data.count >
-        this.pokemonQuerySource.value.data.results.length
+        this.pokemonQuerySource.value.data.results.length;
+
+    return (
+      !hasMore ||
+      this.pokemonQuerySource.value.loading ||
+      this.pokemonQuerySource.value.error
     );
   }
 

@@ -19,7 +19,9 @@
 }
 
 .pokemon-image {
-  width: 100%;
+  width: 200px;
+  min-width: 200px;
+  min-height: 200px;
   background-color: #f3f4f6;
 }
 

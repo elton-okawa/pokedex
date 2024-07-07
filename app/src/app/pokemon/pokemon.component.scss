@@ -1,5 +1,5 @@
 .pokemon-container {
-  margin: 24px auto 0px auto;
+  margin: 24px auto 200px auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,6 +17,15 @@
   gap: 16px;
   grid-template-columns: 1fr 1fr 1fr;
   width: 100%;
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 300px;
+  font-size: 2rem;
+  text-align: center;
 }
 
 .load-more-button {
