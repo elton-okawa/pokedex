@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 
 export function setupApp(app: INestApplication) {
+  app.enableCors();
   app.setGlobalPrefix("api");
   app.useGlobalPipes(
     new ValidationPipe({

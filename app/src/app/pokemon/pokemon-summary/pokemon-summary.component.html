@@ -1,0 +1,7 @@
+<a [routerLink]="['/pokemon', pokemon.id]">
+  <section class="pokemon-container">
+    <h2 class="pokemon-name">{{ capitalizedName }}</h2>
+    <img class="pokemon-image" [src]="imageUrl" />
+    <p class="pokemon-number">N° {{ paddedNumber }}</p>
+  </section>
+</a>
