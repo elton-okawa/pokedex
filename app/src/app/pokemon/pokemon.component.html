@@ -1,13 +1,21 @@
-<section class="pokemon-list">
-  <app-search (valueChanged)="onSearch($event)" />
+<section class="pokemon-container">
+  <app-search
+    class="pokemon-filter"
+    placeholder="Filter pokemon"
+    (valueChanged)="onSearch($event)"
+  />
   @if (isLoading) {
   <p>Loading</p>
   } @if (isError) {
   <p>Error</p>
   }
-  <app-pokemon-summary
-    *ngFor="let summary of pokemonQuery.results"
-    [pokemon]="summary"
-  />
-  <button (click)="onLoadMore()" [disabled]="!hasMore">Load more</button>
+  <div class="pokemon-grid">
+    <app-pokemon-summary
+      *ngFor="let summary of pokemonQuery.results"
+      [pokemon]="summary"
+    />
+  </div>
+  <button class="load-more-button" (click)="onLoadMore()" [disabled]="!hasMore">
+    Load more pokemon
+  </button>
 </section>

@@ -1,5 +1,6 @@
 <input
+  class="search"
   type="text"
-  placeholder="Filter pokemon"
+  [placeholder]="placeholder"
   (input)="onSearch(getEventValue($event))"
 />

@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-search',
@@ -17,15 +17,13 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
   styleUrl: './search.component.scss',
 })
 export class SearchComponent implements OnInit, OnDestroy {
-  @Input() debounceTimeMs = 1000;
+  @Input() placeholder = '';
   @Output() valueChanged = new EventEmitter<string>();
 
   private subject = new Subject<string>();
 
   ngOnInit(): void {
-    this.subject
-      .pipe(debounceTime(this.debounceTimeMs), distinctUntilChanged())
-      .subscribe((value) => this.valueChanged.emit(value));
+    this.subject.subscribe((value) => this.valueChanged.emit(value));
   }
 
   ngOnDestroy(): void {
