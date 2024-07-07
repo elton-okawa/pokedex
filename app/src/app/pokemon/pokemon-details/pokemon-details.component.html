@@ -1,7 +1,24 @@
-<section name="pokemon" *ngIf="pokemon$ | async as pokemon">
-  <div *ngIf="pokemon.loading">Loading...</div>
-  <div *ngIf="pokemon.error">{{ pokemon.error.message }}</div>
-  <div *ngIf="pokemon.data">
-    <h3>{{ pokemon.data.name }}</h3>
+<section class="pokemon-container">
+  <div *ngIf="result.loading">Loading...</div>
+  <div *ngIf="result.error">{{ result.error.message }}</div>
+  <div *ngIf="result.data" class="pokemon-data column">
+    <h2 class="pokemon-name">{{ capitalizedName }} Nº{{ paddedNumber }}</h2>
+    <div class="row">
+      <img class="pokemon-image" [src]="result.data.image.default" />
+      <div class="column">
+        <div class="row">
+          <p>{{ weight }}</p>
+          <p>{{ height }}</p>
+        </div>
+        <div>
+          <p *ngFor="let status of result.data.stats">
+            {{ formatStatus(status.name) }}: {{ status.base }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <app-pokemon-type *ngFor="let type of result.data.types" [type]="type" />
+    </div>
   </div>
 </section>
