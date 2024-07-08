@@ -36,11 +36,17 @@ Start both app and api at the same time:
 npm run start
 ```
 
+Backend: http://localhost:3000
+Frontend: http://localhost:4200
+
 ## Build and run docker images
 
 ```bash
 docker compose up
 ```
+
+Backend: http://localhost:3000
+Frontend: http://localhost:4200
 
 # Thoughts
 

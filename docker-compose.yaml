@@ -5,7 +5,7 @@ services:
     pull_policy: never
     build: ./app
     ports:
-      - "8080:80"
+      - "4200:80"
   pokemon-api:
     image: pokemon-api
     container_name: pokemon-api
