@@ -28,12 +28,18 @@ cd api
 npm run test:cov
 ```
 
-## Run
+## Run locally
 
 Start both app and api at the same time:
 
 ```bash
 npm run start
+```
+
+## Build and run docker images
+
+```bash
+docker compose up
 ```
 
 # Thoughts
