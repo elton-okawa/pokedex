@@ -13,6 +13,7 @@ application built in [Angular](https://angular.dev).
 1. Clone the repository.
 2. Install dependencies:
    ```shell
+   npm install
    cd api/
    npm install
    cd ../app/
